@@ -6,7 +6,7 @@ using System.Web;
 using Microsoft.Identity.Client;
 namespace EWS_OAuth2
 {
-    class RelatorioBackup
+   public class RelatorioBackup
     {
         // Using Microsoft.Identity.Client
 
@@ -16,6 +16,7 @@ namespace EWS_OAuth2
         private string Email { get; set; }
         private string Pasta { get; set; }
         private string URL { get; set; }
+        public int DiasEmail { get; set; }
 
         /* var  cca = ConfidentialClientApplicationBuilder
        .Create("2c3e5fa7-3d0f-470e-a3b3-7e9945e1cfae")      //client Id
@@ -24,7 +25,7 @@ namespace EWS_OAuth2
        .Build();
            */
 
-        public RelatorioBackup(string tenantid, string clientid, string clientsecret, string email, string pasta = "Backup", string url = "https://outlook.office365.com/.default")
+        public RelatorioBackup(string tenantid, string clientid, string clientsecret, string email, string pasta = "Backup", int _Dias=7, string url = "https://outlook.office365.com/.default")
         {
             this.TenantID = tenantid;
             this.ClientID = clientid;
@@ -32,6 +33,7 @@ namespace EWS_OAuth2
             this.Email = email;
             this.Pasta = pasta;
             this.URL = url;
+            this.DiasEmail = _Dias;
         }
         public async System.Threading.Tasks.Task GerarRelatorio(int diashistoricoemail = -7, int quantidadeemail = 250)
         {
@@ -43,7 +45,6 @@ namespace EWS_OAuth2
                 .Build();
 
             var ewsScopes = new string[] { "https://outlook.office365.com/.default" };
-            Cliente cliente = new Cliente();
 
             try
             {
@@ -62,7 +63,7 @@ namespace EWS_OAuth2
                 ewsClient.HttpHeaders.Add("X-AnchorMailbox", Email);
 
                 // Ler todas as mensagens dos últimos -1 dia
-                TimeSpan ts = new TimeSpan(-1, 0, 0, 0);
+                TimeSpan ts = new TimeSpan(DiasEmail, 0, 0, 0);
                 DateTime date = DateTime.Now.Add(ts);
 
 
@@ -94,15 +95,14 @@ namespace EWS_OAuth2
                                 {
                                     //if (Item.DisplayTo == "backup@tvconsultoria.com.br")
                                     //{
-                                    
-                                        cliente.DataRecebimento = Item.DateTimeReceived.ToString();
-                                        cliente.EmailAssunto = Item.Subject.ToString();
-                                    StringBuilder sb = new StringBuilder();
-                                   int pi =  Console.WriteLine(Item.Body.ToString().IndexOf("Empresa"));
-                                    int pf = Console.WriteLine(Item.)
-                                    //Console.WriteLine(cliente.EmailAssunto);
-                                   // Console.WriteLine(Item.Body.ToString());
 
+                                    // cliente.DataRecebimento = Item.DateTimeReceived.ToString();
+                                    Console.WriteLine("==INICIO==\n");
+                                    Console.WriteLine("ID: " + Item.Id.ToString());
+                                    Console.WriteLine("DATA-RECEBIMENTO: " + Item.DateTimeReceived.ToString());
+                                    Console.WriteLine("ASSUNTO:" + Item.Subject.ToString());
+                                    Console.WriteLine("BODY: " + Item.Body.ToString());
+                                    Console.WriteLine("\n==FIM==");
                                 }
                             }
                         } while (emailMessages.MoreAvailable);
